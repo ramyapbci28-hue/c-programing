@@ -1,0 +1,26 @@
+    // Read the five-digit integer
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+
+    // Extract 1st digit (units place)
+    sum += n % 10;
+    n = n / 10;
+
+    // Extract 2nd digit (tens place)
+    sum += n % 10;
+    n = n / 10;
+
+    // Extract 3rd digit (hundreds place)
+    sum += n % 10;
+    n = n / 10;
+
+    // Extract 4th digit (thousands place)
+    sum += n % 10;
+    n = n / 10;
+
+    // Extract 5th digit (ten-thousands place)
+    sum += n;
+
+    // Print the final sum
+    printf("%d\n", sum);
