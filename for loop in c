@@ -1,0 +1,30 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+int main() {
+    int a, b;
+    if (!(cin >> a >> b)) return 0;
+
+    // Array to store lowercase English representations for numbers 1 to 9
+    // Using a 1-indexed approach by leaving index 0 empty
+    string words[] = {"", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+
+    // Iterate through each integer n in the interval [a, b]
+    for (int n = a; n <= b; n++) {
+        if (n >= 1 && n <= 9) {
+            cout << words[n] << endl;
+        } else if (n > 9) {
+            if (n % 2 == 0) {
+                cout << "even" << endl;
+            } else {
+                cout << "odd" << endl;
+            }
+        }
+    }
+
+    return 0;
+}
+
