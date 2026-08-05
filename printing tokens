@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char s[1001];
+    
+    // Read the complete line including spaces
+    if (fgets(s, sizeof(s), stdin) != NULL) {
+        // Iterate through each character of the string
+        for (int i = 0; s[i] != '\0'; i++) {
+            if (s[i] == ' ') {
+                printf("\n"); // Print newline instead of a space
+            } else {
+                printf("%c", s[i]); // Print the character
+            }
+        }
+    }
+    
+    return 0;
+}
