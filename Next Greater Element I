@@ -1,0 +1,50 @@
+
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* nextGreaterElement(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize) {
+    // 1. Find the maximum value in nums2 to size our lookup table dynamically
+    int maxVal = 0;
+    for (int i = 0; i < nums2Size; i++) {
+        if (nums2[i] > maxVal) {
+            maxVal = nums2[i];
+        }
+    }
+
+    // 2. Create and initialize a lookup array (acts as our Hash Map)
+    // mapping element value -> its next greater element
+    int* nextGreaterMap = (int*)malloc((maxVal + 1) * sizeof(int));
+    for (int i = 0; i <= maxVal; i++) {
+        nextGreaterMap[i] = -1; // Default to -1 if no greater element exists
+    }
+
+    // 3. Monotonic Stack implementation
+    int* stack = (int*)malloc(nums2Size * sizeof(int));
+    int top = -1;
+
+    // Traverse nums2 from left to right
+    for (int i = 0; i < nums2Size; i++) {
+        // While stack is not empty and current element is greater than the stack's top element
+        while (top >= 0 && nums2[i] > stack[top]) {
+            // We found the next greater element for the value at the top of the stack
+            nextGreaterMap[stack[top]] = nums2[i];
+            top--; // Pop the element
+        }
+        // Push the current element onto the stack
+        stack[++top] = nums2[i];
+    }
+
+    // 4. Build the result array for nums1 using our lookup table
+    int* result = (int*)malloc(nums1Size * sizeof(int));
+    for (int i = 0; i < nums1Size; i++) {
+        result[i] = nextGreaterMap[nums1[i]];
+    }
+
+    // 5. Clean up temporary memory allocations and return
+    free(stack);
+    free(nextGreaterMap);
+    
+    *returnSize = nums1Size;
+    return result;
+}
