@@ -1,0 +1,57 @@
+
+#include <stdbool.h>
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+int lengthLongestPath(char* input) {
+    int max_len = 0;
+    int len = strlen(input);
+    
+    // path_length[i] stores the accumulated absolute path length at depth i
+    // The maximum possible depth is bounded by the input length
+    int path_length[1000] = {0}; 
+    
+    int i = 0;
+    while (i < len) {
+        // 1. Identify depth by counting tabs ('\t')
+        int depth = 0;
+        while (i < len && input[i] == '\t') {
+            depth++;
+            i++;
+        }
+        
+        // 2. Measure name length and detect if it's a file
+        int name_len = 0;
+        bool is_file = false;
+        while (i < len && input[i] != '\n') {
+            if (input[i] == '.') {
+                is_file = true;
+            }
+            name_len++;
+            i++;
+        }
+        
+        // 3. Compute absolute path length for current depth
+        int cur_len = 0;
+        if (depth == 0) {
+            cur_len = name_len;
+        } else {
+            cur_len = path_length[depth - 1] + 1 + name_len; // +1 handles the '/' separator
+        }
+        
+        // Save the length at the current depth
+        path_length[depth] = cur_len;
+        
+        // 4. Update total maximum if a file is reached
+        if (is_file) {
+            max_len = MAX(max_len, cur_len);
+        }
+        
+        // Move past the newline character ('\n')
+        if (i < len && input[i] == '\n') {
+            i++;
+        }
+    }
+    
+    return max_len;
+}
