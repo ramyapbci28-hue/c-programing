@@ -1,0 +1,86 @@
+
+#include <stdlib.h>
+
+// --- Stack Implementation ---
+typedef struct {
+    int* data;
+    int top;
+    int capacity;
+} Stack;
+
+Stack* createStack(int capacity) {
+    Stack* stack = (Stack*)malloc(sizeof(Stack));
+    stack->capacity = capacity;
+    stack->top = -1;
+    stack->data = (int*)malloc(stack->capacity * sizeof(int));
+    return stack;
+}
+
+void stackPush(Stack* stack, int x) {
+    stack->data[++(stack->top)] = x;
+}
+
+int stackPop(Stack* stack) {
+    return stack->data[(stack->top)--];
+}
+
+int stackPeek(Stack* stack) {
+    return stack->data[stack->top];
+}
+
+bool stackIsEmpty(Stack* stack) {
+    return stack->top == -1;
+}
+
+void stackFree(Stack* stack) {
+    free(stack->data);
+    free(stack);
+}
+
+// --- Queue Implementation using Two Stacks ---
+typedef struct {
+    Stack* s1;
+    Stack* s2;
+} MyQueue;
+
+MyQueue* myQueueCreate() {
+    MyQueue* queue = (MyQueue*)malloc(sizeof(MyQueue));
+    // Using a capacity of 100 as a standard limit for typical test cases
+    queue->s1 = createStack(100);
+    queue->s2 = createStack(100);
+    return queue;
+}
+
+void myQueuePush(MyQueue* obj, int x) {
+    stackPush(obj->s1, x);
+}
+
+int myQueuePop(MyQueue* obj) {
+    // If s2 is empty, move everything from s1 to s2
+    if (stackIsEmpty(obj->s2)) {
+        while (!stackIsEmpty(obj->s1)) {
+            stackPush(obj->s2, stackPop(obj->s1));
+        }
+    }
+    return stackPop(obj->s2);
+}
+
+int myQueuePeek(MyQueue* obj) {
+    // If s2 is empty, move everything from s1 to s2
+    if (stackIsEmpty(obj->s2)) {
+        while (!stackIsEmpty(obj->s1)) {
+            stackPush(obj->s2, stackPop(obj->s1));
+        }
+    }
+    return stackPeek(obj->s2);
+}
+
+bool myQueueEmpty(MyQueue* obj) {
+    return stackIsEmpty(obj->s1) && stackIsEmpty(obj->s2);
+}
+
+void myQueueFree(MyQueue* obj) {
+    stackFree(obj->s1);
+    stackFree(obj->s2);
+    free(obj);
+}
