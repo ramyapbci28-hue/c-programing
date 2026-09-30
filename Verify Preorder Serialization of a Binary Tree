@@ -1,0 +1,31 @@
+
+#include <string.h>
+
+bool isValidSerialization(char* preorder) {
+    // Start with 1 available slot for the root
+    int slots = 1;
+    
+    // Use strtok to parse the comma-separated values safely
+    char* token = strtok(preorder, ",");
+    
+    while (token != NULL) {
+        // A node consumes 1 available slot
+        slots--;
+        
+        // If slots become negative before finishing, it's an invalid structure
+        if (slots < 0) {
+            return false;
+        }
+        
+        // If it's a non-null node, it creates 2 new empty slots
+        if (strcmp(token, "#") != 0) {
+            slots += 2;
+        }
+        
+        // Move to the next token
+        token = strtok(NULL, ",");
+    }
+    
+    // For a fully complete and valid binary tree, all slots must be exactly filled
+    return slots == 0;
+}
