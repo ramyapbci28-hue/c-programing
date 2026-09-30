@@ -1,0 +1,37 @@
+
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+int main() {
+ // Max length is 1000, plus 1 for the null terminator
+    char num[1001];
+    
+    // Initialize frequency array for digits 0-9 with zeros
+    int frequency[10] = {0};
+    
+    // Read the input string from STDIN
+    if (scanf("%1000s", num) == 1) {
+        
+        // Loop through each character until the end of the string
+        for (int i = 0; num[i] != '\0'; i++) {
+            // Check if the character is a digit between '0' and '9'
+            if (num[i] >= '0' && num[i] <= '9') {
+                // Increment the count using character arithmetic
+                frequency[num[i] - '0']++;
+            }
+        }
+    }
+    
+    // Print the ten space-separated frequencies
+    for (int i = 0; i < 10; i++) {
+        printf("%d", frequency[i]);
+        if (i < 9) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */    
+    return 0;
+}
+       
