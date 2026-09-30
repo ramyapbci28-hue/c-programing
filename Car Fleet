@@ -1,0 +1,44 @@
+#include <stdlib.h>
+
+typedef struct {
+    int position;
+    double time;
+} Car;
+
+// Helper function to sort cars by position in descending order
+int compareCars(const void* a, const void* b) {
+    return ((Car*)b)->position - ((Car*)a)->position;
+}
+
+int carFleet(int target, int* position, int positionSize, int* speed, int speedSize) {
+    if (positionSize == 0) {
+        return 0;
+    }
+
+    // Allocate memory for the car structures
+    Car* cars = (Car*)malloc(positionSize * sizeof(Car));
+    for (int i = 0; i < positionSize; i++) {
+        cars[i].position = position[i];
+        cars[i].time = (double)(target - position[i]) / speed[i];
+    }
+
+    // Sort cars from closest to furthest from the target
+    qsort(cars, positionSize, sizeof(Car), compareCars);
+
+    int fleets = 0;
+    double currentFleetTime = 0.0;
+
+    // Traverse the sorted cars
+    for (int i = 0; i < positionSize; i++) {
+        // If this car takes longer than the current leading fleet, it forms a new fleet
+        if (cars[i].time > currentFleetTime) {
+            fleets++;
+            currentFleetTime = cars[i].time;
+        }
+    }
+
+    // Free the allocated memory
+    free(cars);
+
+    return fleets;
+}
