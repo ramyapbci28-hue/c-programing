@@ -1,0 +1,24 @@
+int countStudents(int* students, int studentsSize, int* sandwiches, int sandwichesSize) {
+    int count[2] = {0, 0};
+    
+    // Count the number of students who want circular (0) and square (1) sandwiches
+    for (int i = 0; i < studentsSize; i++) {
+        count[students[i]]++;
+    }
+    
+    // Process sandwiches in order from top to bottom
+    for (int i = 0; i < sandwichesSize; i++) {
+        int sandwich = sandwiches[i];
+        
+        // If there are students left who want this type of sandwich, they will eventually take it
+        if (count[sandwich] > 0) {
+            count[sandwich]--;
+        } else {
+            // No remaining students want this top sandwich; nobody else can eat
+            return sandwichesSize - i;
+        }
+    }
+    
+    // All students successfully ate
+    return 0;
+}
