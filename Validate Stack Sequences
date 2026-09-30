@@ -1,0 +1,19 @@
+bool validateStackSequences(int* pushed, int pushedSize, int* popped, int poppedSize) {
+    int stack[pushedSize];
+    int top = -1;
+    int j = 0;
+    
+    for (int i = 0; i < pushedSize; i++) {
+        // Push the current element onto the stack
+        stack[++top] = pushed[i];
+        
+        // Pop from the stack as long as it matches the popped sequence
+        while (top >= 0 && stack[top] == popped[j]) {
+            top--;
+            j++;
+        }
+    }
+    
+    // If the stack is empty, the sequence is valid
+    return top == -1;
+}
