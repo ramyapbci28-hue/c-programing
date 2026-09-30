@@ -1,0 +1,29 @@
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+int maxSubarraySumCircular(int* nums, int numsSize) {
+    int totalSum = 0;
+    int maxSum = nums[0], currentMax = 0;
+    int minSum = nums[0], currentMin = 0;
+
+    for (int i = 0; i < numsSize; i++) {
+        // Standard Kadane to find max subarray sum
+        currentMax = MAX(nums[i], currentMax + nums[i]);
+        maxSum = MAX(maxSum, currentMax);
+
+        // Modified Kadane to find min subarray sum
+        currentMin = MIN(nums[i], currentMin + nums[i]);
+        minSum = MIN(minSum, currentMin);
+
+        // Track total sum of the array
+        totalSum += nums[i];
+    }
+
+    // If all numbers are negative, return the maximum single element
+    if (maxSum < 0) {
+        return maxSum;
+    }
+
+    // Return the maximum of the non-circular and circular results
+    return MAX(maxSum, totalSum - minSum);
+}
