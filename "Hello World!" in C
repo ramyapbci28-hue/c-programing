@@ -1,0 +1,19 @@
+
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+int main() {
+    char s[100];
+    
+    // Reads a full line of input from stdin including spaces, up to the newline character
+    scanf("%[^\n]%*c", &s);
+      
+    // Print "Hello, World!" on the first line
+    printf("Hello, World!\n");
+    
+    // Print the input string stored in 's' on the second line
+    printf("%s", s);
+    
+    return 0;
+}
