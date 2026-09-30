@@ -1,0 +1,48 @@
+
+#include <stdlib.h>
+#include <string.h>
+int lexicographic_sort(const char* a, const char* b) {
+    return strcmp(a, b);
+}
+
+int lexicographic_sort_reverse(const char* a, const char* b) {
+    return strcmp(b, a);
+}
+
+int distinct_chars(const char *s) {
+    int count = 0;
+    int hash[26] = {0};
+    while (*s) {
+        if (hash[*s - 'a'] == 0) {
+            hash[*s - 'a'] = 1;
+            count++;
+        }
+        s++;
+    }
+    return count;
+}
+
+int sort_by_number_of_distinct_characters(const char* a, const char* b) {
+    int res = distinct_chars(a) - distinct_chars(b);
+    return (res != 0) ? res : strcmp(a, b);
+}
+
+int sort_by_length(const char* a, const char* b) {
+    int res = strlen(a) - strlen(b);
+    return (res != 0) ? res : strcmp(a, b);
+}
+
+void string_sort(char** arr, const int len, int (*cmp_func)(const char* a, const char* b)) {
+    for (int i = 0; i < len - 1; i++) {
+        for (int j = i + 1; j < len; j++) {
+            if (cmp_func(arr[i], arr[j]) > 0) {
+                char* temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+}
+
+
+
