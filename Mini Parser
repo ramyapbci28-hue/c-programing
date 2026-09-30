@@ -1,0 +1,98 @@
+**
+ * *********************************************************************
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * *********************************************************************
+ *
+ * // Initializes an empty nested list and return a reference to the nested integer.
+ * struct NestedInteger *NestedIntegerInit();
+ *
+ * // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ * bool NestedIntegerIsInteger(struct NestedInteger *);
+ *
+ * // Return the single integer that this NestedInteger holds, if it holds a single integer
+ * // The result is undefined if this NestedInteger holds a nested list
+ * int NestedIntegerGetInteger(struct NestedInteger *);
+ *
+ * // Set this NestedInteger to hold a single integer.
+ * void NestedIntegerSetInteger(struct NestedInteger *, int value);
+ *
+ * // Set this NestedInteger to hold a nested list and adds a nested integer elem to it.
+ * void NestedIntegerAdd(struct NestedInteger *, struct NestedInteger *elem);
+ *
+ * // Return the nested list that this NestedInteger holds, if it holds a nested list
+ * // The result is undefined if this NestedInteger holds a single integer
+ * struct NestedInteger **NestedIntegerGetList(struct NestedInteger *);
+ *
+ * // Return the number of elements in the nested list that this NestedInteger holds, if it holds a nested list
+ * int NestedIntegerGetListSize(struct NestedInteger *);
+ */
+
+struct NestedInteger* deserialize(char* s) {
+    // Case 1: The input is just a single integer (does not start with '[')
+    if (*s != '[') {
+        struct NestedInteger* ni = NestedIntegerInit();
+        NestedIntegerSetInteger(ni, atoi(s));
+        return ni;
+    }
+    
+    // Case 2: The input represents a nested list
+    int len = strlen(s);
+    struct NestedInteger* stack[50000]; // Stack to hold active lists
+    int top = -1;
+    
+    struct NestedInteger* curr = NULL;
+    int i = 0;
+    
+    while (i < len) {
+        if (s[i] == '[') {
+            // Start of a new list: initialize it and push to stack
+            curr = NestedIntegerInit();
+            stack[++top] = curr;
+            i++;
+        } 
+        else if (s[i] == ']' || s[i] == ',') {
+            // Delimiters: simply advance past them
+            i++;
+        } 
+        else {
+            // We found a number (can be positive or negative)
+            int start = i;
+            if (s[i] == '-') {
+                i++;
+            }
+            while (s[i] >= '0' && s[i] <= '9') {
+                i++;
+            }
+            
+            // Extract the number substring and convert to integer
+            int val = 0;
+            bool is_negative = (s[start] == '-');
+            int k = is_negative ? start + 1 : start;
+            while (k < i) {
+                val = val * 10 + (s[k] - '0');
+                k++;
+            }
+            if (is_negative) {
+                val = -val;
+            }
+            
+            // Create a single NestedInteger for the number
+            struct NestedInteger* num_ni = NestedIntegerInit();
+            NestedIntegerSetInteger(num_ni, val);
+            
+            // Add it to the current active list at the top of the stack
+            NestedIntegerAdd(stack[top], num_ni);
+        }
+        
+        // If we just encountered a closing bracket and there's more than one list on the stack,
+        // pop the completed list and add it to the parent list.
+        if (i < len && s[i] == ']' && top > 0) {
+            struct NestedInteger* completed = stack[top--];
+            NestedIntegerAdd(stack[top], completed);
+        }
+    }
+    
+    // The remaining item on the stack is the fully parsed root list
+    return stack[0];
+}
