@@ -1,0 +1,106 @@
+
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_TAGS 1000
+#define MAX_TAG_LEN 10
+
+// Helper function to check if a substring matches exactly
+bool startsWith(const char* str, const char* prefix) {
+    return strncmp(str, prefix, strlen(prefix)) == 0;
+}
+
+bool isValid(char* code) {
+    // A primitive stack to keep track of open tag names
+    char stack[MAX_TAGS][MAX_TAG_LEN];
+    int stack_top = 0;
+
+    int i = 0;
+    int n = strlen(code);
+
+    while (i < n) {
+        // Rule 1 check: The entire code snippet must be wrapped inside a single closed tag.
+        // If the stack is empty after the first loop iteration, there cannot be extra characters.
+        if (i > 0 && stack_top == 0) {
+            return false;
+        }
+
+        // Check for tag structures
+        if (code[i] == '<') {
+            // Case 1: CDATA Section <![CDATA[
+            if (startsWith(&code[i], "<![CDATA[")) {
+                if (stack_top == 0) return false; // CDATA must be nested inside a root tag
+                
+                // Find closing sequence "]]>" starting past "<![CDATA["
+                char* close_cdata = strstr(&code[i + 9], "]]>");
+                if (!close_cdata) {
+                    return false;
+                }
+                // Skip pointer past the closing "]]>"
+                i = (close_cdata - code) + 3;
+            } 
+            // Case 2: End Tag </TAG_NAME>
+            else if (i + 1 < n && code[i + 1] == '/') {
+                char* close_bracket = strchr(&code[i + 2], '>');
+                if (!close_bracket) {
+                    return false;
+                }
+                
+                int len = close_bracket - (&code[i + 2]);
+                if (len < 1 || len > 9) return false;
+
+                // Extract close tag name
+                char tagname[MAX_TAG_LEN];
+                strncpy(tagname, &code[i + 2], len);
+                tagname[len] = '\0';
+
+                // Check stack matching constraints
+                if (stack_top == 0 || strcmp(stack[stack_top - 1], tagname) != 0) {
+                    return false;
+                }
+                stack_top--; // Pop from stack
+                i = (close_bracket - code) + 1;
+            } 
+            // Case 3: Start Tag <TAG_NAME>
+            else {
+                char* close_bracket = strchr(&code[i + 1], '>');
+                if (!close_bracket) {
+                    return false;
+                }
+
+                int len = close_bracket - (&code[i + 1]);
+                // Rule 3: Valid tag name length must be in range [1, 9]
+                if (len < 1 || len > 9) {
+                    return false;
+                }
+
+                char tagname[MAX_TAG_LEN];
+                strncpy(tagname, &code[i + 1], len);
+                tagname[len] = '\0';
+
+                // Rule 3: Must only contain uppercase characters
+                for (int j = 0; j < len; j++) {
+                    if (tagname[j] < 'A' || tagname[j] > 'Z') {
+                        return false;
+                    }
+                }
+
+                // Push to stack
+                if (stack_top >= MAX_TAGS) return false; // Stack overflow safety guard
+                strcpy(stack[stack_top], tagname);
+                stack_top++;
+                
+                i = (close_bracket - code) + 1;
+            }
+        } else {
+            // Rule 4: Plain text components must remain wrapped within valid active tags
+            if (stack_top == 0) {
+                return false;
+            }
+            i++;
+        }
+    }
+
+    // Must be balanced and empty at execution boundary end
+    return stack_top == 0;
+}
