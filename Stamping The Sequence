@@ -1,0 +1,90 @@
+
+#include <string.h>
+#include <stdbool.h>
+
+/**
+ * Helper function to check if the stamp can match the target at a given index.
+ * A match is valid if at least one character is not '?' and all non-'?' 
+ * characters match the corresponding character in the stamp.
+ */
+bool canReplace(char* stamp, char* target, int index, int stampLen) {
+    bool hasNonQuestionMark = false;
+    for (int i = 0; i < stampLen; i++) {
+        if (target[index + i] != '?') {
+            if (target[index + i] != stamp[i]) {
+                return false;
+            }
+            hasNonQuestionMark = true;
+        }
+    }
+    return hasNonQuestionMark;
+}
+
+/**
+ * Helper function to replace the target substring with '?' wildcards.
+ * Returns the count of replaced characters.
+ */
+int replace(char* target, int index, int stampLen) {
+    int replacedCount = 0;
+    for (int i = 0; i < stampLen; i++) {
+        if (target[index + i] != '?') {
+            target[index + i] = '?';
+            replacedCount++;
+        }
+    }
+    return replacedCount;
+}
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* movesToStamp(char* stamp, char* target, int* returnSize) {
+    int stampLen = strlen(stamp);
+    int targetLen = strlen(target);
+    
+    // The maximum possible moves is 10 * targetLen
+    int maxMoves = 10 * targetLen;
+    int* tempMoves = (int*)malloc(sizeof(int) * maxMoves);
+    int moveCount = 0;
+    
+    bool* visited = (bool*)calloc(targetLen, sizeof(bool));
+    int totalReplaced = 0;
+    
+    bool changed = true;
+    while (totalReplaced < targetLen && changed) {
+        changed = false;
+        
+        // Try to place the stamp at every valid starting index
+        for (int i = 0; i <= targetLen - stampLen; i++) {
+            if (!visited[i] && canReplace(stamp, target, i, stampLen)) {
+                totalReplaced += replace(target, i, stampLen);
+                visited[i] = true;
+                tempMoves[moveCount++] = i;
+                changed = true;
+                
+                if (totalReplaced == targetLen) {
+                    break;
+                }
+            }
+        }
+    }
+    
+    free(visited);
+    
+    // If we couldn't replace the entire string, return an empty array
+    if (totalReplaced < targetLen) {
+        free(tempMoves);
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    // Since we found the sequence in reverse, we must reverse the order of moves
+    int* ans = (int*)malloc(sizeof(int) * moveCount);
+    for (int i = 0; i < moveCount; i++) {
+        ans[i] = tempMoves[moveCount - 1 - i];
+    }
+    
+    free(tempMoves);
+    *returnSize = moveCount;
+    return ans;
+}
