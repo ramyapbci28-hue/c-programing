@@ -1,0 +1,65 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MIN_ELEMENT 1
+#define MAX_ELEMENT 1000000
+// Calculates the sum of a variable number of arguments
+int sum (int count, ...) {
+    int total_sum = 0;
+    va_list args;
+    
+    // Initialize the argument pointer list
+    va_start(args, count);
+    
+    for (int i = 0; i < count; i++) {
+        // Access the next argument in the list
+        total_sum += va_arg(args, int);
+    }
+    
+    // Clean up the argument pointer list
+    va_end(args);
+    
+    return total_sum;
+}
+
+// Finds the minimum value out of a variable number of arguments
+int min(int count, ...) {
+    va_list args;
+    va_start(args, count);
+    
+    // Read the first element to initialize the tracking variable
+    int min_val = va_arg(args, int);
+    
+    for (int i = 1; i < count; i++) {
+        int current = va_arg(args, int);
+        if (current < min_val) {
+            min_val = current;
+        }
+    }
+    
+    va_end(args);
+    return min_val;
+}
+
+// Finds the maximum value out of a variable number of arguments
+int max(int count, ...) {
+    va_list args;
+    va_start(args, count);
+    
+    // Read the first element to initialize the tracking variable
+    int max_val = va_arg(args, int);
+     for (int i = 1; i < count; i++) {
+        int current = va_arg(args, int);
+        if (current > max_val) {
+            max_val = current;
+        }
+    }
+    
+    va_end(args);
+    return max_val;
+}
+
+// Code stub required by HackerRank to validate the solutions
+int test_implementations_by_sending_
