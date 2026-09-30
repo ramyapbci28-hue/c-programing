@@ -1,0 +1,33 @@
+
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+// Helper function to perform the recursion and fill the array
+void helper(struct TreeNode* root, int* res, int* index) {
+    if (root == NULL) {
+        return;
+    }
+    
+    helper(root->left, res, index);     // Visit Left
+    res[(*index)++] = root->val;        // Visit Root
+    helper(root->right, res, index);    // Visit Right
+}
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* inorderTraversal(struct TreeNode* root, int* returnSize) {
+    // LeetCode constraints usually guarantee nodes <= 100, 
+    // but allocating up to 100 or using a dynamic sizing is standard.
+    int* result = (int*)malloc(100 * sizeof(int));
+    *returnSize = 0;
+    
+    helper(root, result, returnSize);
+    
+    return result;
+}
