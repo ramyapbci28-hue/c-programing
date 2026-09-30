@@ -1,0 +1,43 @@
+
+#include <ctype.h>
+
+int calculate(char* s) {
+    if (s == NULL || strlen(s) == 0) return 0;
+    
+    long current_number = 0;
+    long last_number = 0;
+    long total_sum = 0;
+    char last_operator = '+';
+    
+    int length = strlen(s);
+    
+    for (int i = 0; i < length; i++) {
+        char current_char = s[i];
+        
+        // Build the current multi-digit number
+        if (isdigit(current_char)) {
+            current_number = current_number * 10 + (current_char - '0');
+        }
+        
+        // Evaluate when we encounter a new operator or the end of the string
+        if ((!isdigit(current_char) && current_char != ' ') || i == length - 1) {
+            if (last_operator == '+') {
+                total_sum += last_number;
+                last_number = current_number;
+            } else if (last_operator == '-') {
+                total_sum += last_number;
+                last_number = -current_number;
+            } else if (last_operator == '*') {
+                last_number = last_number * current_number;
+            } else if (last_operator == '/') {
+                last_number = last_number / current_number; // C truncates toward zero by default
+            }
+            
+            last_operator = current_char;
+            current_number = 0;
+        }
+    }
+    
+    total_sum += last_number;
+    return (int)total_sum;
+}
