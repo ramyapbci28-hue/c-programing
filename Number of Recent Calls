@@ -1,0 +1,69 @@
+
+
+// Define a structure for a queue node
+typedef struct Node {
+    int t;
+    struct Node* next;
+} Node;
+
+// Implement the RecentCounter structure using a head and tail pointer for the queue
+typedef struct {
+    Node* head;
+    Node* tail;
+    int size;
+} RecentCounter;
+
+// Initializes the counter with zero recent requests
+RecentCounter* recentCounterCreate() {
+    RecentCounter* obj = (RecentCounter*)malloc(sizeof(RecentCounter));
+    obj->head = NULL;
+    obj->tail = NULL;
+    obj->size = 0;
+    return obj;
+}
+
+// Adds a new request at time t and filters out outdated requests
+int recentCounterPing(RecentCounter* obj, int t) {
+    // 1. Create a new node for the current timestamp
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->t = t;
+    newNode->next = NULL;
+    
+    // 2. Append the new node to the tail of the queue
+    if (obj->tail == NULL) {
+        obj->head = newNode;
+        obj->tail = newNode;
+    } else {
+        obj->tail->next = newNode;
+        obj->tail = newNode;
+    }
+    obj->size++;
+    
+    // 3. Remove all timestamps older than t - 3000 from the head
+    int min_time = t - 3000;
+    while (obj->head != NULL && obj->head->t < min_time) {
+        Node* temp = obj->head;
+        obj->head = obj->head->next;
+        free(temp);
+        obj->size--;
+    }
+    
+    // If the queue becomes empty, reset the tail pointer
+    if (obj->head == NULL) {
+        obj->tail = NULL;
+    }
+    
+    // 4. Return the number of valid requests in the window
+    return obj->size;
+}
+
+// Free memory allocated for the counter (optional cleanup)
+void recentCounterFree(RecentCounter* obj) {
+    Node* current = obj->head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(obj);
+}
