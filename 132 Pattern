@@ -1,0 +1,36 @@
+
+#include <stdlib.h>
+#include <limits.h>
+
+bool find132pattern(int* nums, int numsSize) {
+    if (numsSize < 3) {
+        return false;
+    }
+    
+    // Dynamically allocate an array to serve as our stack
+    int* stack = (int*)malloc(sizeof(int) * numsSize);
+    int top = 0; // Stack pointer
+    
+    // This variable represents the '2' in the 132 pattern (nums[k])
+    int num_k = INT_MIN;
+    
+    // Traverse the array from right to left
+    for (int i = numsSize - 1; i >= 0; i--) {
+        // If we find an element smaller than num_k, we found the '1' (nums[i])
+        if (nums[i] < num_k) {
+            free(stack);
+            return true;
+        }
+        
+        // Maintain a decreasing stack to find the largest valid '2' (num_k)
+        while (top > 0 && nums[i] > stack[top - 1]) {
+            num_k = stack[--top];
+        }
+        
+        // Push current element as a candidate for '3' (nums[j])
+        stack[top++] = nums[i];
+    }
+    
+    free(stack);
+    return false;
+}
