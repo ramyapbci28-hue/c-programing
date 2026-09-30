@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+// Recursive function to find the nth term
+int find_nth_term(int n, int a, int b, int c) {
+    // Base Case 1: If n is 1, return the first term 'a'
+    if (n == 1) {
+        return a;
+    }
+    // Base Case 2: If n is 2, return the second term 'b'
+    if (n == 2) {
+        return b;
+    }
+    // Base Case 3: If n is 3, return the third term 'c'
+    if (n == 3) {
+        return c;
+    }
+    
+    // Recursive Case: Sum of the previous three terms
+    return find_nth_term(n - 1, a, b, c) + 
+           find_nth_term(n - 2, a, b, c) + 
+           find_nth_term(n - 3, a, b, c);
+}
+
+int main() {
+    int n, a, b, c;
+  
+    // Reading inputs
+    if (scanf("%d", &n) != 1) return 1;
+    if (scanf("%d %d %d", &a, &b, &c) != 3) return 1;
+    
+    // Calculating and printing the nth term
+    int ans = find_nth_term(n, a,
+
