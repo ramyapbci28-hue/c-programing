@@ -1,0 +1,31 @@
+
+#include <stdlib.h>
+#define MAX_HEIGHT 41
+// 1. Define the box structure
+struct box {
+    int length;
+    int width;
+    int height;
+};
+
+// Create a typedef so we can use 'box' directly as a type
+typedef struct box box;
+
+// 2. Implement get_volume function
+int get_volume(box b) {
+    return b.length * b.width * b.height;
+}
+
+// 3. Implement is_lower_than_max_height function
+int is_lower_than_max_height(box b) {
+    if (b.height < MAX_HEIGHT) {
+        return 1;
+    } else {
+        return 0;
+    }
+	/**
+	* Return 1 if the box's height is lower than MAX_HEIGHT and 0 otherwise
+	*/
+}
+
+int main()
