@@ -1,0 +1,76 @@
+
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int head;
+    int tail;
+    int capacity;
+    int size;
+} MyCircularQueue;
+
+// Initializes the object with the size of the queue to be k
+MyCircularQueue* myCircularQueueCreate(int k) {
+    MyCircularQueue* obj = (MyCircularQueue*)malloc(sizeof(MyCircularQueue));
+    obj->data = (int*)malloc(sizeof(int) * k);
+    obj->head = 0;
+    obj->tail = -1; // Set to -1 so the first enQueue increments it to 0
+    obj->capacity = k;
+    obj->size = 0;
+    return obj;
+}
+
+// Checks whether the circular queue is empty or not
+bool myCircularQueueIsEmpty(MyCircularQueue* obj) {
+    return obj->size == 0;
+}
+
+// Checks whether the circular queue is full or not
+bool myCircularQueueIsFull(MyCircularQueue* obj) {
+    return obj->size == obj->capacity;
+}
+
+// Inserts an element into the circular queue. Return true if successful.
+bool myCircularQueueEnQueue(MyCircularQueue* obj, int value) {
+    if (myCircularQueueIsFull(obj)) {
+        return false;
+    }
+    // Circular increment of tail pointer
+    obj->tail = (obj->tail + 1) % obj->capacity;
+    obj->data[obj->tail] = value;
+    obj->size++;
+    return true;
+}
+
+// Deletes an element from the circular queue. Return true if successful.
+bool myCircularQueueDeQueue(MyCircularQueue* obj) {
+    if (myCircularQueueIsEmpty(obj)) {
+        return false;
+    }
+    // Circular increment of head pointer
+    obj->head = (obj->head + 1) % obj->capacity;
+    obj->size--;
+    return true;
+}
+
+// Gets the front item from the queue. If empty, return -1.
+int myCircularQueueFront(MyCircularQueue* obj) {
+    if (myCircularQueueIsEmpty(obj)) {
+        return -1;
+    }
+    return obj->data[obj->head];
+}
+
+// Gets the last item from the queue. If empty, return -1.
+int myCircularQueueRear(MyCircularQueue* obj) {
+    if (myCircularQueueIsEmpty(obj)) {
+        return -1;
+    }
+    return obj->data[obj->tail];
+}
+
+// Frees the allocated memory for the queue
+void myCircularQueueFree(MyCircularQueue* obj) {
+    free(obj->data);
+    free(obj);
+}
