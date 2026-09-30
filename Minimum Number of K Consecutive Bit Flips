@@ -1,0 +1,29 @@
+int minKBitFlips(int* nums, int numsSize, int k) {
+    int total_flips = 0;
+    int current_flips = 0;
+
+    for (int i = 0; i < numsSize; i++) {
+        // 1. Remove the flip that started k steps ago because it no longer covers index i
+        if (i >= k && nums[i - k] == 2) {
+            current_flips--;
+        }
+
+        // 2. Determine the actual bit value at index i based on current active flips
+        // If current_flips is odd, the bit is inverted. If even, it remains its original value.
+        if (current_flips % 2 == nums[i]) {
+            // If the calculated state is 0, we MUST initiate a flip here
+            
+            // If there aren't enough elements left to complete a flip of length k, it's impossible
+            if (i + k > numsSize) {
+                return -1;
+            }
+
+            // Mark this index as the start of a flip (using '2' as a special placeholder flag)
+            nums[i] = 2; 
+            current_flips++;
+            total_flips++;
+        }
+    }
+
+    return total_flips;
+}
