@@ -1,0 +1,52 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+// Helper function to count the total number of nodes in the tree
+int countNodes(struct TreeNode* root) {
+    if (root == NULL) {
+        return 0;
+    }
+    return 1 + countNodes(root->left) + countNodes(root->right);
+}
+
+// Helper function to perform the actual preorder traversal recursively
+void preorder(struct TreeNode* root, int* arr, int* index) {
+    if (root == NULL) {
+        return;
+    }
+    
+    // 1. Visit Root
+    arr[(*index)++] = root->val;
+    
+    // 2. Visit Left Subtree
+    preorder(root->left, arr, index);
+    
+    // 3. Visit Right Subtree
+    preorder(root->right, arr, index);
+}
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* preorderTraversal(struct TreeNode* root, int* returnSize) {
+    // Determine the total size needed for the array
+    *returnSize = countNodes(root);
+    
+    // Dynamically allocate memory for the result array
+    int* result = (int*)malloc((*returnSize) * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    // Fill the array using the preorder helper function
+    int index = 0;
+    preorder(root, result, &index);
+    
+    return result;
+}
